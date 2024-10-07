@@ -1,7 +1,6 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
-import Button from 'primevue/button';
 </script>
 
 <template>
@@ -23,9 +22,6 @@ import Button from 'primevue/button';
                 >
                     <div class="p-6 text-gray-900 dark:text-gray-100">
                         You're logged in!
-                    </div>
-                    <div class="p-6 text-gray-900 dark:text-gray-100">
-                        <Button label="Test Button" size="small" />
                     </div>
                 </div>
             </div>

@@ -16,13 +16,15 @@ class PersonFactory extends Factory
      */
     public function definition(): array
     {
-        // has either a phone number or an email address
-        $contact = $this->faker->boolean ? 'email' : 'phone';
+        // has either a phone number, email, or both
+        $phone = $this->faker->boolean(50) ? $this->faker->phoneNumber : null;
+        $email = $this->faker->boolean(50) ? $this->faker->unique()->safeEmail : null;
 
         return [
             'first_name' => $this->faker->firstName,
             'last_name' => $this->faker->lastName,
-            $contact => $contact === 'email' ? $this->faker->unique()->safeEmail : $this->faker->phoneNumber,
+            'email' => $email,
+            'phone' => $phone,
         ];
     }
 }

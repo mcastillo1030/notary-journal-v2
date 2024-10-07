@@ -3,15 +3,16 @@ import './bootstrap';
 
 import { createInertiaApp } from '@inertiajs/vue3';
 import { definePreset } from '@primevue/themes';
-import Lara from '@primevue/themes/lara';
+import Aura from '@primevue/themes/aura';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import PrimeVue from 'primevue/config';
 import { createApp, h } from 'vue';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
+import { loadTheme } from './Utils/theme';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
-const primaryPreset = definePreset(Lara, {
+const primaryPreset = definePreset(Aura, {
     semantic: {
         primary: {
             50: '{indigo.50}',
@@ -37,6 +38,8 @@ createInertiaApp({
             import.meta.glob('./Pages/**/*.vue'),
         ),
     setup({ el, App, props, plugin }) {
+        loadTheme();
+
         return createApp({ render: () => h(App, props) })
             .use(plugin)
             .use(ZiggyVue)
@@ -44,7 +47,7 @@ createInertiaApp({
                 theme: {
                     preset: primaryPreset,
                     options: {
-                        darkModeSelector: '.nj-app-dark',
+                        darkModeSelector: '.nj-dark',
                     },
                 },
             })
