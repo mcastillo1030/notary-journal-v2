@@ -1,20 +1,22 @@
 {
-   "folders": [
-      {
-         "path": "."
-      }
-   ],
-   "settings": {
-      "phpsab.fixerEnable": false,
-      "phpsab.snifferEnable": false,
-      "phpcs.enable": false,
-      "editor.formatOnSave": true,
-      // Enable the extension we installed
-      "laravel-pint.enable": true,
-      // Define the new formatting extension as the default
-      // formatter for all PHP files
-      "[php]": {
-         "editor.defaultFormatter": "open-southeners.laravel-pint"
-      },
-   }
+    "folders": [
+        {
+            "path": "."
+        }
+    ],
+    "settings": {
+        "phpsab.fixerEnable": false,
+        "phpsab.snifferEnable": false,
+        "phpcs.enable": false,
+        "editor.formatOnSave": true,
+        // Enable the extension we installed
+        "laravel-pint.enable": true,
+        // Define the new formatting extension as the default
+        // formatter for all PHP files
+        "[php]": {
+            "editor.defaultFormatter": "open-southeners.laravel-pint"
+        },
+        "editor.tabSize": 4,
+        "editor.insertSpaces": true
+    }
 }

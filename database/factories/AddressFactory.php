@@ -16,9 +16,11 @@ class AddressFactory extends Factory
      */
     public function definition(): array
     {
+        $hasLine2 = $this->faker->boolean;
+
         return [
             'line_1' => $this->faker->streetAddress,
-            'line_2' => $this->faker->secondaryAddress,
+            'line_2' => $hasLine2 ? $this->faker->secondaryAddress : null,
             'city' => $this->faker->city,
             'state' => $this->faker->stateAbbr,
             'zip' => $this->faker->postcode,

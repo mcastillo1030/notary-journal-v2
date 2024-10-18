@@ -19,7 +19,6 @@ return new class extends Migration
             $table->string('state');
             $table->string('zip');
             $table->foreignId('person_id')->constrained()->onDelete('cascade');
-            $table->softDeletes();
             $table->timestamps();
         });
     }

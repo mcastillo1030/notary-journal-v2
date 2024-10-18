@@ -1,37 +1,63 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, router } from '@inertiajs/vue3';
-
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import SplitButton from 'primevue/splitbutton';
 import IconField from 'primevue/iconfield';
 import InputText from 'primevue/inputtext';
 import InputIcon from 'primevue/inputicon';
+import Toolbar from 'primevue/toolbar';
+import Button from 'primevue/button';
 import { FilterMatchMode } from '@primevue/core/api';
-import { ref } from 'vue';
+import { ref, inject } from 'vue';
+import { useModelApiResponses } from '@/Composables/useModelApiResponses';
 
+// injectables
+const confirmDestroy = inject('confirmDestroy');
+const showSuccessToast = inject('showSuccessToast');
+const showErrorToast = inject('showErrorToast');
+const showUnknownErrorToast = inject('showUnknownErrorToast');
+
+// state
 const dt = ref();
 const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
 });
+const { handleAxiosResponse, handleAxiosError } = useModelApiResponses({
+    onIndexReload: (message) => showSuccessToast({ message }),
+    onResponseError: (message) => showErrorToast({ message }),
+    onUnknownError: showUnknownErrorToast,
+});
 
-const getActions = ({ id }) => [
+// methods
+const getActions = (person) => [
     {
         label: 'Update',
-        command: () => router.get(`/people/${id}/edit`),
+        command: () =>
+            document.dispatchEvent(
+                new CustomEvent('person.update', { detail: person }),
+            ),
     },
     {
         separator: true,
     },
     {
         label: 'Delete',
-        command: () => console.log('Delete', id),
+        command: () =>
+            confirmDestroy({
+                model: 'person',
+                params: { person: person.id },
+                onSuccess: handleAxiosResponse,
+                onError: handleAxiosError,
+            }),
     },
 ];
-
 const viewAction = ({ id }) => router.get(`/people/${id}`);
+const addAction = () =>
+    document.dispatchEvent(new CustomEvent('person.create'));
 
+// lifecycle
 defineProps({
     people: Array,
 });
@@ -43,7 +69,7 @@ defineProps({
     <AuthenticatedLayout>
         <template #header>
             <h2
-                class="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200"
+                class="text-xl font-semibold leading-tight text-zinc-800 dark:text-zinc-200"
             >
                 People
             </h2>
@@ -52,9 +78,9 @@ defineProps({
         <div class="py-12">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
                 <div
-                    class="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800"
+                    class="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-zinc-800"
                 >
-                    <div class="p-6 text-gray-900 dark:text-gray-100">
+                    <div class="dar:border p-1 dark:border-zinc-800">
                         <DataTable
                             ref="dt"
                             :value="people"
@@ -69,15 +95,40 @@ defineProps({
                             paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
                         >
                             <template #header>
-                                <IconField>
-                                    <InputIcon>
-                                        <i class="pi pi-search" />
-                                    </InputIcon>
-                                    <InputText
-                                        v-model="filters['global'].value"
-                                        placeholder="Search..."
-                                    />
-                                </IconField>
+                                <Toolbar>
+                                    <template #start>
+                                        <Button
+                                            icon="pi pi-external-link"
+                                            class="mr-2"
+                                            size="small"
+                                            label="Export"
+                                            severity="secondary"
+                                            @click="dt.exportCSV()"
+                                        />
+                                    </template>
+                                    <template #center>
+                                        <IconField>
+                                            <InputIcon>
+                                                <i class="pi pi-search" />
+                                            </InputIcon>
+                                            <InputText
+                                                v-model="
+                                                    filters['global'].value
+                                                "
+                                                placeholder="Search..."
+                                            />
+                                        </IconField>
+                                    </template>
+                                    <template #end>
+                                        <Button
+                                            icon="pi pi-plus"
+                                            class="mr-2"
+                                            size="small"
+                                            label="Add"
+                                            @click="addAction"
+                                        />
+                                    </template>
+                                </Toolbar>
                             </template>
                             <Column field="id">
                                 <template #body="{ data }">
@@ -112,7 +163,7 @@ defineProps({
                                     </div>
                                 </template>
                             </Column>
-                            <template #empty> No customers found. </template>
+                            <template #empty> No people found. </template>
                         </DataTable>
                     </div>
                 </div>

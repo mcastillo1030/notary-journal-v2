@@ -2,7 +2,7 @@
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
+import InputText from 'primevue/inputtext';
 import { Link, useForm, usePage } from '@inertiajs/vue3';
 
 defineProps({
@@ -25,11 +25,11 @@ const form = useForm({
 <template>
     <section>
         <header>
-            <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+            <h2 class="text-lg font-medium text-zinc-900 dark:text-zinc-100">
                 Profile Information
             </h2>
 
-            <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+            <p class="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
                 Update your account's profile information and email address.
             </p>
         </header>
@@ -41,7 +41,16 @@ const form = useForm({
             <div>
                 <InputLabel for="name" value="Name" />
 
-                <TextInput
+                <!-- <TextInput
+                    id="name"
+                    type="text"
+                    class="mt-1 block w-full"
+                    v-model="form.name"
+                    required
+                    autofocus
+                    autocomplete="name"
+                /> -->
+                <InputText
                     id="name"
                     type="text"
                     class="mt-1 block w-full"
@@ -57,7 +66,15 @@ const form = useForm({
             <div>
                 <InputLabel for="email" value="Email" />
 
-                <TextInput
+                <!-- <TextInput
+                    id="email"
+                    type="email"
+                    class="mt-1 block w-full"
+                    v-model="form.email"
+                    required
+                    autocomplete="username"
+                /> -->
+                <InputText
                     id="email"
                     type="email"
                     class="mt-1 block w-full"
@@ -70,13 +87,13 @@ const form = useForm({
             </div>
 
             <div v-if="mustVerifyEmail && user.email_verified_at === null">
-                <p class="mt-2 text-sm text-gray-800 dark:text-gray-200">
+                <p class="mt-2 text-sm text-zinc-800 dark:text-zinc-200">
                     Your email address is unverified.
                     <Link
                         :href="route('verification.send')"
                         method="post"
                         as="button"
-                        class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:text-gray-400 dark:hover:text-gray-100 dark:focus:ring-offset-gray-800"
+                        class="rounded-md text-sm text-zinc-600 underline hover:text-zinc-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:text-zinc-400 dark:hover:text-zinc-100 dark:focus:ring-offset-zinc-800"
                     >
                         Click here to re-send the verification email.
                     </Link>
@@ -101,7 +118,7 @@ const form = useForm({
                 >
                     <p
                         v-if="form.recentlySuccessful"
-                        class="text-sm text-gray-600 dark:text-gray-400"
+                        class="text-sm text-zinc-600 dark:text-zinc-400"
                     >
                         Saved.
                     </p>
