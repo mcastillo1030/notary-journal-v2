@@ -6,7 +6,7 @@ import { router } from '@inertiajs/vue3';
 import { useModelApiResponses } from '@/Composables/useModelApiResponses';
 
 const menu = ref();
-const addressItem = ref();
+const personItem = ref();
 const confirmUnlink = inject('confirmUnlink');
 const showSuccessToast = inject('showSuccessToast');
 const showErrorToast = inject('showErrorToast');
@@ -25,8 +25,8 @@ const items = ref([
                 icon: 'pi pi-pencil',
                 command: () =>
                     document.dispatchEvent(
-                        new CustomEvent('address.update', {
-                            detail: JSON.parse(addressItem.value.dataset.edit),
+                        new CustomEvent('person.update', {
+                            detail: JSON.parse(personItem.value.dataset.edit),
                         }),
                     ),
             },
@@ -34,20 +34,20 @@ const items = ref([
                 label: 'Go to',
                 icon: 'pi pi-eye',
                 command: () =>
-                    router.visit(`/addresses/${addressItem.value.dataset.id}`),
+                    router.visit(`/people/${personItem.value.dataset.id}`),
             },
             {
                 label: 'Unlink',
                 icon: 'pi pi-ban',
                 command: () =>
                     confirmUnlink({
-                        model: 'person',
+                        model: 'address',
                         routeParams: {
-                            person: route().params.person,
+                            address: route().params.address,
                         },
                         params: {
-                            attachable_type: 'address',
-                            attachable_ids: [addressItem.value.dataset.id],
+                            attachable_type: 'person',
+                            attachable_ids: [personItem.value.dataset.id],
                         },
                         onSuccess: handleAxiosResponse,
                         onError: handleAxiosError,
@@ -57,14 +57,13 @@ const items = ref([
     },
 ]);
 
-const getEditableAddressAttributes = (address) => {
+const getEditablePersonAttributes = (person) => {
     return {
-        id: address.id,
-        line_1: address.line_1,
-        line_2: address.line_2,
-        city: address.city,
-        state: address.state,
-        zip: address.zip,
+        id: person.id,
+        first_name: person.first_name,
+        last_name: person.last_name,
+        email: person.email,
+        phone: person.phone,
     };
 };
 
@@ -73,47 +72,43 @@ const toggle = (event) => {
 };
 
 defineProps({
-    address: Object,
+    person: Object,
 });
 </script>
 
 <template>
     <div
-        ref="addressItem"
-        class="nj-address-wm absolute right-4 top-1/2 flex -translate-y-1/2 justify-end"
-        :data-id="address.id"
-        :data-edit="JSON.stringify(getEditableAddressAttributes(address))"
+        ref="personItem"
+        class="nj-person-wm absolute right-4 top-1/2 flex -translate-y-1/2 justify-end"
+        :data-id="person.id"
+        :data-edit="JSON.stringify(getEditablePersonAttributes(person))"
     >
         <Button
             type="button"
             icon="pi pi-ellipsis-v"
             @click="toggle"
             aria-haspopup="true"
-            :aria-controls="`nj-address-wm-menu-${address.id}`"
+            :aria-controls="`nj-person-wm-menu-${person.id}`"
             size="small"
             severity="secondary"
-            pt:root="nj-address-wm__options-btn"
+            pt:root="nj-person-wm__options-btn"
         />
         <Menu
             ref="menu"
-            :id="`nj-address-wm-menu-${address.id}`"
+            :id="`nj-person-wm-menu-${person.id}`"
             :model="items"
             :popup="true"
         />
     </div>
-    <address class="not-italic">
-        <span>{{ address.line_1 }}</span>
-        <br />
-        <span v-if="address.line_2">{{ address.line_2 }}</span>
-        <br v-if="address.line_2" />
-        {{ address.city }},
-        {{ address.state }}
-        {{ address.zip }}
-    </address>
+    <div>
+        <p>{{ person.first_name }} {{ person.last_name }}</p>
+        <p v-if="person.email">{{ person.email }}</p>
+        <p v-if="person.phone">{{ person.phone }}</p>
+    </div>
 </template>
 
 <style scoped>
-.nj-address-wm__options-btn {
+.nj-person-wm__options-btn {
     --p-button-sm-padding-x: 0;
     --p-button-sm-padding-y: 0.125rem;
     --p-button-icon-only-width: 1rem;

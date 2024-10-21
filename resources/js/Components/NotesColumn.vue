@@ -1,6 +1,7 @@
 <script setup>
 import NoteCard from './NoteCard.vue';
 import Button from 'primevue/button';
+import Panel from 'primevue/panel';
 import { useDialogStore } from '@/Stores/useDialogStore';
 
 const dialogStore = useDialogStore();
@@ -12,37 +13,41 @@ defineProps({
 });
 </script>
 <template>
-    <aside class="nj-notes-column px-3 md:px-0">
-        <header class="mb-4 flex justify-between">
-            <h2 class="text-lg">Notes</h2>
-            <Button
-                icon="pi pi-plus"
-                size="small"
-                class="p-button-sm nj-notes-column__add-btn"
-                @click="dialogStore.openNoteDialog()"
-            />
-        </header>
-        <ul class="flex flex-col gap-3">
-            <li v-if="!notes.length">No notes.</li>
-            <li
-                v-else
-                v-for="note in notes"
-                :key="note.id"
-                class="bg-white shadow-sm sm:rounded-lg dark:bg-gray-800"
-            >
-                <NoteCard
-                    :note="note"
-                    :noteable-id="noteableId"
-                    :noteable-type="noteableType"
+    <aside
+        class="nj-notes-column order-3 px-4 sm:px-0 lg:order-2 lg:row-span-2"
+    >
+        <Panel header="Notes" toggleable class="nj-notes-column__panel">
+            <div class="mb-4">
+                <Button
+                    icon="pi pi-plus"
+                    size="small"
+                    label="New"
+                    class="p-button-sm nj-notes-column__add-btn"
+                    @click="dialogStore.openNoteDialog()"
                 />
-            </li>
-        </ul>
+            </div>
+            <ul class="flex flex-col gap-3">
+                <li
+                    v-if="!notes.length"
+                    class="rounded-md bg-gray-200 px-4 py-2 dark:bg-zinc-700"
+                >
+                    No notes available
+                </li>
+                <li v-else v-for="note in notes" :key="note.id">
+                    <NoteCard
+                        :note="note"
+                        :noteable-id="noteableId"
+                        :noteable-type="noteableType"
+                    />
+                </li>
+            </ul>
+        </Panel>
     </aside>
 </template>
 
 <style scoped>
-.nj-notes-column__add-btn {
-    --p-button-sm-padding-y: 0;
-    --p-button-sm-padding-x: 0;
+.nj-notes-column__panel {
+    --p-panel-background: transparent;
+    border: 2px solid var(--p-panel-border-color);
 }
 </style>

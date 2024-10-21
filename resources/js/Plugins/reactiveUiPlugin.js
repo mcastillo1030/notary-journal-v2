@@ -7,7 +7,7 @@
  * @returns {void}
  * @see https://v3.vuejs.org/guide/plugins.html
  */
-import { axiosDestroy } from '@/Services/notaryApi';
+import { axiosDestroy, axiosDetach } from '@/Services/notaryApi';
 
 export default {
     install: (app) => {
@@ -52,6 +52,38 @@ export default {
             },
         );
 
+        // Provide the confirmUnlink function to the app
+        app.provide(
+            'confirmUnlink',
+            ({ model, routeParams, params, onSuccess, onError }) => {
+                const { attachable_type } = params;
+
+                $confirm.require({
+                    message: `Do you want to unlink that ${attachable_type} from this ${model}?`,
+                    header: 'Danger Zone',
+                    icon: 'pi pi-info-circle',
+                    rejectLabel: 'Cancel',
+                    rejectProps: {
+                        label: 'Cancel',
+                        severity: 'secondary',
+                        outlined: true,
+                    },
+                    acceptProps: {
+                        label: 'Unlink',
+                        severity: 'danger',
+                    },
+                    accept: () =>
+                        axiosDetach({
+                            model,
+                            routeParams,
+                            params,
+                            onSuccess,
+                            onError,
+                        }),
+                });
+            },
+        );
+
         // Provide the showSuccesstoast function to the app
         app.provide('showSuccessToast', ({ message, delay = 3000 }) =>
             showToast('success', 'Success', message, delay),
@@ -75,10 +107,12 @@ export default {
         // Provide the showUnknownErrorToast function to the app
         app.provide(
             'showUnknownErrorToast',
-            ({
-                message = 'An unknown error occurred. Please try again.',
-                delay = 3000,
-            }) => showToast('error', 'Error', message, delay),
+            (
+                opts = {
+                    message: 'An unknown error occurred. Please try again.',
+                    delay: 3000,
+                },
+            ) => showToast('error', 'Error', opts.message, opts.delay),
         );
     },
 };

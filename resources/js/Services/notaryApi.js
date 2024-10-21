@@ -15,6 +15,10 @@ const axiosRequest = ({
         return;
     }
 
+    if (method === 'get' && Object.keys(params).length > 0) {
+        route += '?' + new URLSearchParams(params).toString();
+    }
+
     axios[method](route, params, useAxiosCsrf())
         .then(onSuccess)
         .catch(onError)
@@ -29,19 +33,6 @@ export const useAxiosCsrf = () => {
     };
 };
 
-const getModelRoutes = (model, params) => {
-    let route = {};
-
-    if (model === 'note') {
-        const parentModel = Object.keys(params).filter((k) => k !== 'note')[0];
-        route = routeNames[model][parentModel];
-    } else {
-        route = routeNames[model];
-    }
-
-    return route;
-};
-
 const hasInvalidParams = (model, params = {}) => {
     return !model || (model === 'note' && Object.keys(params).length === 0);
 };
@@ -53,6 +44,9 @@ export const routeNames = {
         show: 'people.show',
         update: 'people.updateAjax',
         destroy: 'people.destroyAjax',
+        list: 'people.list',
+        attach: 'people.attach',
+        detach: 'people.detach',
     },
     address: {
         index: 'addresses.index',
@@ -60,33 +54,33 @@ export const routeNames = {
         show: 'addresses.show',
         update: 'addresses.update',
         destroy: 'addresses.destroy',
+        list: 'addresses.list',
+        attach: 'addresses.attach',
+        detach: 'addresses.detach',
     },
     note: {
-        person: {
-            index: 'people.notes.index',
-            store: 'people.notes.store',
-            show: 'people.notes.show',
-            update: 'people.notes.update',
-            destroy: 'people.notes.destroy',
-        },
+        index: 'notes.index', // unused
+        store: 'notes.store',
+        show: 'notes.show', // unused
+        update: 'notes.update',
+        destroy: 'notes.destroy',
     },
 };
 
 export const axiosCreate = ({
     model = null,
-    routeParams = {},
     params = {},
     onSuccess = () => {},
     onError = () => {},
     onFinally = () => {},
 }) => {
-    if (hasInvalidParams(model, routeParams)) {
+    if (hasInvalidParams(model, params)) {
         return;
     }
 
     axiosRequest({
         method: 'post',
-        route: route(getModelRoutes(model, routeParams).store, routeParams),
+        route: route(routeNames[model].store),
         params,
         onSuccess,
         onError,
@@ -108,7 +102,7 @@ export const axiosUpdate = ({
 
     axiosRequest({
         method: 'patch',
-        route: route(getModelRoutes(model, routeParams).update, routeParams),
+        route: route(routeNames[model].update, routeParams),
         params,
         onSuccess,
         onError,
@@ -129,7 +123,74 @@ export const axiosDestroy = ({
 
     axiosRequest({
         method: 'delete',
-        route: route(getModelRoutes(model, routeParams).destroy, routeParams),
+        route: route(routeNames[model].destroy, routeParams),
+        onSuccess,
+        onError,
+        onFinally,
+    });
+};
+
+export const axiosList = ({
+    model = null,
+    params = {},
+    onSuccess = () => {},
+    onError = () => {},
+    onFinally = () => {},
+}) => {
+    if (!model) {
+        return;
+    }
+
+    axiosRequest({
+        method: 'get',
+        route: route(routeNames[model].list),
+        params,
+        onSuccess,
+        onError,
+        onFinally,
+    });
+};
+
+export const axiosAttach = ({
+    model = null,
+    routeParams = {},
+    params = {},
+    onSuccess = () => {},
+    onError = () => {},
+    onFinally = () => {},
+}) => {
+    if (!model || Object.keys(params).length === 0) {
+        return;
+    }
+
+    axiosRequest({
+        method: 'patch',
+        route: route(routeNames[model].attach, routeParams),
+        params,
+        onSuccess,
+        onError,
+        onFinally,
+    });
+};
+
+export const axiosDetach = ({
+    model = null,
+    routeParams = {},
+    params = {},
+    onSuccess = () => {},
+    onError = () => {},
+    onFinally = () => {},
+}) => {
+    if (!model || Object.keys(params).length === 0) {
+        return;
+    }
+
+    console.log(routeParams);
+
+    axiosRequest({
+        method: 'patch',
+        route: route(routeNames[model].detach, routeParams),
+        params,
         onSuccess,
         onError,
         onFinally,

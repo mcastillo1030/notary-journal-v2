@@ -19,7 +19,6 @@ const showSuccessToast = inject('showSuccessToast');
 const showErrorToast = inject('showErrorToast');
 const showUnknownErrorToast = inject('showUnknownErrorToast');
 
-// state
 const dt = ref();
 const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -31,12 +30,12 @@ const { handleAxiosResponse, handleAxiosError } = useModelApiResponses({
 });
 
 // methods
-const getActions = (person) => [
+const getActions = (address) => [
     {
         label: 'Update',
         command: () =>
             document.dispatchEvent(
-                new CustomEvent('person.update', { detail: person }),
+                new CustomEvent('address.update', { detail: address }),
             ),
     },
     {
@@ -46,25 +45,25 @@ const getActions = (person) => [
         label: 'Delete',
         command: () =>
             confirmDestroy({
-                model: 'person',
-                params: { person: person.id },
+                model: 'address',
+                params: { address: address.id },
                 onSuccess: handleAxiosResponse,
                 onError: handleAxiosError,
             }),
     },
 ];
-const viewAction = ({ id }) => router.get(`/people/${id}`);
+const viewAction = ({ id }) => router.get(`/addresses/${id}`);
 const addAction = () =>
-    document.dispatchEvent(new CustomEvent('person.create'));
+    document.dispatchEvent(new CustomEvent('address.create'));
 
 // lifecycle
 defineProps({
-    people: Array,
+    addresses: Array,
 });
 </script>
 
 <template>
-    <Head title="People" />
+    <Head title="Addresses" />
 
     <AuthenticatedLayout>
         <template #header>
@@ -83,15 +82,22 @@ defineProps({
                     <div class="dar:border p-1 dark:border-zinc-800">
                         <DataTable
                             ref="dt"
-                            :value="people"
+                            :value="addresses"
                             stripedRows
                             dataKey="id"
                             stateStorage="session"
-                            stateKey="nj-state-people-index"
+                            stateKey="nj-state-addresses-index"
                             tableStyle="min-width: 50rem"
                             :paginator="true"
                             :rows="10"
                             :filters="filters"
+                            :globalFilterFields="[
+                                'line_1',
+                                'line_2',
+                                'city',
+                                'state',
+                                'zip',
+                            ]"
                             paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
                         >
                             <template #header>
@@ -140,30 +146,20 @@ defineProps({
                                     />
                                 </template>
                             </Column>
-                            <Column
-                                field="first_name"
-                                header="First Name"
-                            ></Column>
-                            <Column
-                                field="last_name"
-                                header="Last Name"
-                            ></Column>
-                            <Column header="Contact">
+                            <Column header="Street Address">
                                 <template #body="{ data }">
                                     <div class="flex flex-col">
-                                        <span v-if="data.email">{{
-                                            data.email
+                                        <span>{{ data.line_1 }}</span>
+                                        <span v-if="data.line_2">{{
+                                            data.line_2
                                         }}</span>
-                                        <span v-if="data.phone">{{
-                                            data.phone
-                                        }}</span>
-                                        <span v-if="!data.email && !data.phone"
-                                            >-</span
-                                        >
                                     </div>
                                 </template>
                             </Column>
-                            <template #empty> No people found. </template>
+                            <Column field="city" header="City"></Column>
+                            <Column field="state" header="State"></Column>
+                            <Column field="zip" header="Zip"></Column>
+                            <template #empty> No addresses found. </template>
                         </DataTable>
                     </div>
                 </div>

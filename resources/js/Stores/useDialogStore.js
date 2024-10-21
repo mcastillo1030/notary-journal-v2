@@ -4,7 +4,8 @@ export const useDialogStore = defineStore('dialog', {
     state: () => ({
         noteDialogVisible: false,
         personDialogVisible: false,
-        addressDialogVisible: false,
+        addressEditDialogVisible: false,
+        addressLinkDialogVisible: false,
     }),
     actions: {
         openNoteDialog() {
@@ -19,11 +20,17 @@ export const useDialogStore = defineStore('dialog', {
         closePersonDialog() {
             this.personDialogVisible = false;
         },
-        openAddressDialog() {
-            this.addressDialogVisible = true;
+        openAddressEditDialog() {
+            this.addressEditDialogVisible = true;
         },
-        closeAddressDialog() {
-            this.addressDialogVisible = false;
+        closeAddressEditDialog() {
+            this.addressEditDialogVisible = false;
+        },
+        openAddressLinkDialog() {
+            this.addressLinkDialogVisible = true;
+        },
+        closeAddressLinkDialog() {
+            this.addressLinkDialogVisible = false;
         },
     },
 });

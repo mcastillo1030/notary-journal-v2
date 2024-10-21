@@ -4,7 +4,7 @@ import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import Message from 'primevue/message';
 import { onMounted, ref, inject } from 'vue';
-import { axiosCreate, axiosUpdate } from '@/Services/notaryApi';
+import { axiosUpdate } from '@/Services/notaryApi';
 import { useModelApiResponses } from '@/Composables/useModelApiResponses';
 import { useDialogStore } from '@/Stores/useDialogStore';
 import { storeToRefs } from 'pinia';
@@ -15,79 +15,45 @@ const showErrorToast = inject('showErrorToast');
 const showUnknownErrorToast = inject('showUnknownErrorToast');
 
 const dialogStore = useDialogStore();
-const { addressDialogVisible: visible } = storeToRefs(dialogStore);
-const address = ref({
-    line_1: '',
-    line_2: '',
-    city: '',
-    state: '',
-    zip: '',
-    id: null,
-});
-const errors = ref({});
-const action = ref('create');
+const { addressLinkDialogVisible: visible } = storeToRefs(dialogStore);
+const addresses = ref([]);
 
 const reset = () => {
-    dialogStore.closeAddressDialog();
-    address.value = {
-        line_1: '',
-        line_2: '',
-        city: '',
-        state: '',
-        zip: '',
-        id: null,
-    };
-    errors.value = {};
-    action.value = 'create';
+    dialogStore.closeAddressLinkDialog();
+    addresses.value = [];
 };
 const { handleAxiosResponse, handleAxiosError } = useModelApiResponses({
     onPartialReload: (message) => {
         showSuccessToast({ message });
         reset();
     },
-    onResponseHasErrors: (errs) => (errors.value = errs),
     onResponseError: (message) => showErrorToast({ message }),
-    onErrorResponseHasErrors: (errs) => (errors.value = errs),
     onErrorResponseHasMessage: (message) => showErrorToast({ message }),
     onUnknownError: showUnknownErrorToast,
 });
 
 const save = () => {
-    if (action.value === 'create') {
-        axiosCreate({
-            model: 'address',
-            params: {
-                ...address.value,
-                person_id: route().params.person,
-            },
-            onSuccess: handleAxiosResponse,
-            onError: handleAxiosError,
-        });
-    } else {
-        axiosUpdate({
-            model: 'address',
-            routeParams: {
-                address: address.value.id,
-            },
-            params: {
-                ...address.value,
-                person_id: route().params.person,
-            },
-            onSuccess: handleAxiosResponse,
-            onError: handleAxiosError,
-        });
-    }
+    console.log('save');
+    return;
+    // axiosUpdate({
+    //     model: 'address',
+    //     routeParams: {
+    //         address: address.value.id,
+    //     },
+    //     params: {
+    //         ...address.value,
+    //     },
+    //     onSuccess: handleAxiosResponse,
+    //     onError: handleAxiosError,
+    // });
 };
 
 onMounted(() => {
-    document.addEventListener('address.create', () => {
-        action.value = 'create';
-        dialogStore.openAddressDialog();
-    });
-    document.addEventListener('address.update', (event) => {
-        action.value = 'edit';
-        address.value = event.detail;
-        dialogStore.openAddressDialog();
+    document.addEventListener('address.link', (event) => {
+        const { personId } = event.detail;
+        console.log(personId);
+        // addresses.value = event.detail; fetch from api
+        dialogStore.openAddressLinkDialog();
     });
 });
 </script>
@@ -96,8 +62,8 @@ onMounted(() => {
     <Dialog
         v-model:visible="visible"
         modal
-        :header="`${action.charAt(0).toUpperCase() + action.substring(1).toLowerCase()} Address`"
-        :style="{ width: '100%', maxWidth: '55rem' }"
+        header="Link an Address"
+        :style="{ width: '100%', maxWidth: '45rem', maxHeight: '80vh' }"
     >
         <div class="flex flex-col gap-4">
             <label for="line_1" class="font-semibold">Address 1</label>

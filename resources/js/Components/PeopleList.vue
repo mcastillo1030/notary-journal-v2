@@ -1,17 +1,17 @@
 <script setup>
 import DataView from 'primevue/dataview';
-import AddressWithMenu from '@/Components/AddressWithMenu.vue';
+import PersonWithMenu from './PersonWithMenu.vue';
+// import AddressWithMenu from '@/Components/AddressWithMenu.vue';
 
 defineProps({
-    addresses: Array,
+    people: Array,
 });
 </script>
 
 <template>
     <DataView
-        :value="addresses"
-        class="nj-address-list border-surface dark:border-0"
-        pt:emptyMessage:class="px-4 py-2 bg-gray-100 rounded-md dark:bg-zinc-700"
+        :value="people"
+        class="nj-people-list border-surface dark:border-0"
     >
         <template #list="slotProps">
             <ul class="border-surface rounded-lg border dark:border-0">
@@ -24,7 +24,7 @@ defineProps({
                             index !== 0,
                     }"
                 >
-                    <AddressWithMenu :address="item" />
+                    <PersonWithMenu :person="item" />
                 </li>
             </ul>
         </template>
@@ -32,7 +32,7 @@ defineProps({
 </template>
 
 <style>
-.nj-address-list {
+.nj-people-list {
     --p-dataview-content-border-radius: 0.5rem;
 }
 </style>

@@ -11,6 +11,7 @@ import AdminBreadcrumb from '@/Components/AdminBreadcrumb.vue';
 import ConfirmDialog from 'primevue/confirmdialog';
 import Toast from 'primevue/toast';
 import PersonDialog from '@/Components/PersonDialog.vue';
+import AddressDialog from '@/Components/AddressEditDialog.vue';
 
 const showingNavigationDropdown = ref(false);
 </script>
@@ -49,6 +50,12 @@ const showingNavigationDropdown = ref(false);
                                     :active="route().current('people.*')"
                                 >
                                     People
+                                </NavLink>
+                                <NavLink
+                                    :href="route('addresses.index')"
+                                    :active="route().current('addresses.*')"
+                                >
+                                    Addresses
                                 </NavLink>
                             </div>
                         </div>
@@ -159,6 +166,18 @@ const showingNavigationDropdown = ref(false);
                         >
                             Dashboard
                         </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            :href="route('people.index')"
+                            :active="route().current('people.*')"
+                        >
+                            People
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            :href="route('addresses.index')"
+                            :active="route().current('addresses.*')"
+                        >
+                            Addresses
+                        </ResponsiveNavLink>
                     </div>
 
                     <!-- Responsive Settings Options -->
@@ -205,7 +224,13 @@ const showingNavigationDropdown = ref(false);
             <!-- Page Content -->
             <main>
                 <AdminBreadcrumb :breadcrumbs="$page.props.breadcrumbs" />
-                <PersonDialog v-if="route().current('people.*')" />
+                <PersonDialog
+                    v-if="
+                        route().current('people.*') ||
+                        route().current('addresses.show')
+                    "
+                />
+                <AddressDialog v-if="route().current('addresses.*')" />
                 <slot />
             </main>
             <Toast></Toast>

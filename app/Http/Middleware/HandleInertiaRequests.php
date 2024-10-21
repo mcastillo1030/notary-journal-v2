@@ -43,12 +43,18 @@ class HandleInertiaRequests extends Middleware
             'people.storeAjax',
             'people.updateAjax',
             'people.destroyAjax',
-            'people.notes.store',
-            'people.notes.update',
-            'people.notes.destroy',
+            'people.list',
+            'people.attach',
+            'people.detach',
+            'notes.store',
+            'notes.update',
+            'notes.destroy',
             'addresses.store',
             'addresses.destroy',
             'addresses.update',
+            'addresses.list',
+            'addresses.attach',
+            'addresses.detach',
         ]);
     }
 
@@ -88,6 +94,15 @@ class HandleInertiaRequests extends Middleware
                     'label' => 'People',
                     'key' => 'people.index',
                     'route' => route('people.index'),
+                ]);
+            }
+
+            // Addresses index
+            if (preg_match('/addresses/', $route)) {
+                array_push($breadcrumbs, [
+                    'label' => 'Addresses',
+                    'key' => 'addresses.index',
+                    'route' => route('addresses.index'),
                 ]);
             }
 

@@ -16,12 +16,6 @@ const { noteDialogVisible } = storeToRefs(dialogStore);
 const showSuccessToast = inject('showSuccessToast');
 const showErrorToast = inject('showErrorToast');
 const showUnknownErrorToast = inject('showUnknownErrorToast');
-const { handleAxiosResponse, handleAxiosError } = useModelApiResponses({
-    onPartialReload: (message) => showSuccessToast({ message }),
-    onResponseError: (message) => showErrorToast({ message }),
-    onUnknownError: showUnknownErrorToast,
-    onErrorResponseHasErrors: (errs) => (errors.value = errs),
-});
 
 const reset = () => {
     noteContent.value = '';
@@ -29,6 +23,17 @@ const reset = () => {
     // reset errors
     errors.value = {};
 };
+
+const { handleAxiosResponse, handleAxiosError } = useModelApiResponses({
+    onPartialReload: (message) => {
+        showSuccessToast({ message });
+        reset();
+    },
+    onResponseError: (message) => showErrorToast({ message }),
+    onUnknownError: showUnknownErrorToast,
+    onErrorResponseHasMessage: (message) => showErrorToast({ message }),
+    onErrorResponseHasErrors: (errs) => (errors.value = errs),
+});
 
 const handleSaveNote = (e) => {
     const { noteableId, noteableType } = e.target.closest('button').dataset;
@@ -47,17 +52,14 @@ const handleSaveNote = (e) => {
     // const
     axiosCreate({
         model: 'note',
-        routeParams: {
-            [noteableType]: noteableId,
-        },
         params: {
             content: noteContent.value,
+            noteable_id: noteableId,
+            noteable_type: noteableType,
         },
         onSuccess: handleAxiosResponse,
         onError: handleAxiosError,
     });
-
-    reset();
 };
 
 defineProps({
@@ -90,7 +92,9 @@ defineProps({
             class="mb-8 mt-3 flex flex-col"
         >
             <Message
-                v-for="(error, index) in errors.content"
+                v-for="(error, index) in errors.content ||
+                errors.noteable_id ||
+                errors.noteable_type"
                 :key="index"
                 severity="error"
                 >{{ error }}</Message

@@ -18,7 +18,8 @@ return new class extends Migration
             $table->string('city');
             $table->string('state');
             $table->string('zip');
-            $table->foreignId('person_id')->constrained()->onDelete('cascade');
+            // $table->foreignId('person_id')->constrained()->onDelete('cascade');
+            // $table->unsignedBigInteger('person_id')->nullable();
             $table->timestamps();
         });
     }

@@ -5,8 +5,7 @@ import { ref, inject } from 'vue';
 import { useModelApiResponses } from '@/Composables/useModelApiResponses';
 
 const menu = ref();
-
-const personDetail = ref();
+const addressDetail = ref();
 const confirmDestroy = inject('confirmDestroy');
 const showSuccessToast = inject('showSuccessToast');
 const showErrorToast = inject('showErrorToast');
@@ -25,9 +24,9 @@ const items = ref([
                 icon: 'pi pi-pencil',
                 command: () =>
                     document.dispatchEvent(
-                        new CustomEvent('person.update', {
+                        new CustomEvent('address.update', {
                             detail: JSON.parse(
-                                personDetail.value.dataset.person,
+                                addressDetail.value.dataset.address,
                             ),
                         }),
                     ),
@@ -37,9 +36,9 @@ const items = ref([
                 icon: 'pi pi-trash',
                 command: () =>
                     confirmDestroy({
-                        model: 'person',
+                        model: 'address',
                         params: {
-                            person: route().params.person,
+                            person: route().params.address,
                         },
                         onSuccess: handleAxiosResponse,
                         onError: handleAxiosError,
@@ -49,36 +48,36 @@ const items = ref([
     },
 ]);
 
-const toggleMenu = (event) => {
+const toggle = (event) => {
     menu.value.toggle(event);
 };
 
 defineProps({
-    person: Object,
+    address: Object,
 });
 </script>
 
 <template>
     <section
-        class="nj-person-detail bg-white shadow-md sm:rounded-lg dark:bg-zinc-800"
-        :data-person="JSON.stringify(person)"
-        ref="personDetail"
+        class="nj-address-detail bg-white shadow-md sm:rounded-lg dark:bg-zinc-800"
+        :data-address="JSON.stringify(address)"
+        ref="addressDetail"
     >
         <div class="relative p-6 text-zinc-900 dark:text-zinc-100">
             <div class="absolute right-4 top-4 flex justify-end">
                 <Button
                     type="button"
                     icon="pi pi-ellipsis-v"
-                    @click="toggleMenu"
+                    @click="toggle"
                     aria-haspopup="true"
-                    aria-controls="nj-person-detail-menu"
+                    aria-controls="nj-address-detail-menu"
                     size="small"
                     severity="secondary"
-                    pt:root="nj-person-detail__options-btn"
+                    pt:root="nj-address-detail__options-btn"
                 />
                 <Menu
                     ref="menu"
-                    id="nj-person-detail-menu"
+                    id="nj-address-detail-menu"
                     :model="items"
                     :popup="true"
                 />
@@ -96,12 +95,12 @@ defineProps({
                         <div
                             class="text-surface-500 dark:text-surface-300 w-6/12 font-medium md:w-2/12"
                         >
-                            First Name
+                            Address Line 1
                         </div>
                         <div
                             class="text-surface-900 dark:text-surface-0 order-1 w-full md:order-none md:w-8/12"
                         >
-                            {{ person.first_name }}
+                            {{ address.line_1 }}
                         </div>
                     </li>
                     <li
@@ -110,12 +109,13 @@ defineProps({
                         <div
                             class="text-surface-500 dark:text-surface-300 w-6/12 font-medium md:w-2/12"
                         >
-                            Last Name
+                            Address Line 2
                         </div>
                         <div
                             class="text-surface-900 dark:text-surface-0 order-1 w-full md:order-none md:w-8/12"
                         >
-                            {{ person.last_name }}
+                            <span v-if="!address.line_2">&mdash;</span>
+                            <span v-else>{{ address.line_2 }}</span>
                         </div>
                     </li>
                     <li
@@ -124,18 +124,12 @@ defineProps({
                         <div
                             class="text-surface-500 dark:text-surface-300 w-6/12 font-medium md:w-2/12"
                         >
-                            Email
+                            City
                         </div>
                         <div
                             class="text-surface-900 dark:text-surface-0 order-1 w-full md:order-none md:w-8/12"
                         >
-                            <span v-if="!person.email">&mdash;</span>
-                            <a
-                                v-else
-                                class="text-indigo-700 dark:text-indigo-300"
-                                :href="`mailto:${person.email}`"
-                                >{{ person.email }}</a
-                            >
+                            {{ address.city }}
                         </div>
                     </li>
                     <li
@@ -144,18 +138,26 @@ defineProps({
                         <div
                             class="text-surface-500 dark:text-surface-300 w-6/12 font-medium md:w-2/12"
                         >
-                            Phone
+                            State
                         </div>
                         <div
                             class="text-surface-900 dark:text-surface-0 order-1 w-full md:order-none md:w-8/12"
                         >
-                            <span v-if="!person.phone">&mdash;</span>
-                            <a
-                                v-else
-                                class="text-indigo-700 dark:text-indigo-300"
-                                :href="`tel:${person.phone}`"
-                                >{{ person.phone }}</a
-                            >
+                            {{ address.state }}
+                        </div>
+                    </li>
+                    <li
+                        class="border-surface flex flex-wrap items-center border-t px-2 py-4"
+                    >
+                        <div
+                            class="text-surface-500 dark:text-surface-300 w-6/12 font-medium md:w-2/12"
+                        >
+                            Zip
+                        </div>
+                        <div
+                            class="text-surface-900 dark:text-surface-0 order-1 w-full md:order-none md:w-8/12"
+                        >
+                            {{ address.zip }}
                         </div>
                     </li>
                 </ul>
@@ -165,7 +167,7 @@ defineProps({
 </template>
 
 <style scoped>
-.nj-person-detail__options-btn {
+.nj-address-detail__options-btn {
     --p-button-sm-padding-x: 0;
     --p-button-sm-padding-y: 0.125rem;
     --p-button-icon-only-width: 1rem;

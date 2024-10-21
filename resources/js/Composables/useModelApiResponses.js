@@ -2,16 +2,31 @@ import { routeNames } from '@/Services/notaryApi';
 import { router } from '@inertiajs/vue3';
 import { toValue } from 'vue';
 
-const checkNeedsIndex = (data) => {
-    return data.type === 'person' && data.destroyed;
-};
-
-const checkIsIndex = (type) => {
-    if (type !== 'note') {
-        return route().current(routeNames[type].index);
+const pluralize = (str) => {
+    if (str === 'person') {
+        return 'people';
     }
 
-    return false;
+    if (str === 'address') {
+        return 'addresses';
+    }
+
+    return str + 's';
+};
+
+const getReloadOnly = (model) => {
+    // pluralize the model name if it's not 'note' && the current route is not [model].show
+    return route().current(routeNames[model].show)
+        ? [model]
+        : [pluralize(model)];
+};
+
+const checkNeedsIndex = (data) => {
+    return (
+        (data.type === 'person' || data.type === 'address') &&
+        data.destroyed &&
+        route().current(routeNames[data.type].show)
+    );
 };
 
 export const useModelApiResponses = (cbs) => {
@@ -38,14 +53,8 @@ export const useModelApiResponses = (cbs) => {
             return;
         }
 
-        const propsMap = {
-            person: 'person',
-            address: 'addresses',
-            note: 'notes',
-        };
-
         router.reload({
-            only: [propsMap[model]],
+            only: getReloadOnly(model),
             onFinish: () => {
                 callbacks.onPartialReload(message);
             },
@@ -63,7 +72,9 @@ export const useModelApiResponses = (cbs) => {
             response.data.updated;
 
         if (isSuccess) {
-            const isIndex = checkIsIndex(response.data.type);
+            const isIndex = route().current(
+                routeNames[response.data.type].index,
+            );
 
             if (isIndex) {
                 router.reload({

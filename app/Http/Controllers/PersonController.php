@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Note;
 use App\Models\Person;
 // use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -10,6 +9,11 @@ use Inertia\Response;
 
 class PersonController extends Controller
 {
+    private function pluralizeAttachableName(string $name): string
+    {
+        return $name === 'address' ? 'addresses' : $name.'s';
+    }
+
     public function index(): Response
     {
         // Below is old implementation. The new implementation
@@ -132,59 +136,84 @@ class PersonController extends Controller
         ]);
     }
 
-    public function addNote(Person $person)
+    public function list()
     {
-        // get content from request
-        $content = request()->validate([
-            'content' => 'required|string',
-        ]);
+        // Check potential request data for:
+        // not_assigned_to: address_id
+        // assigned_to: address_id
+        // limit: integer
 
-        // create note
-        $note = $person->addNote($content['content']);
+        // All addressess
+        $people = Person::query();
 
-        // return json response
+        // Check if the request has a not_assigned_to key
+        if (request()->has('not_assigned_to')) {
+            $people->whereDoesntHave('addresses', function ($query) {
+                $query->where('address_id', request('not_assigned_to'));
+            });
+        }
+
+        // Check if the request has an assigned_to key
+        if (request()->has('assigned_to')) {
+            $people->whereHas('addresses', function ($query) {
+                $query->where('address_id', request('assigned_to'));
+            });
+        }
+
+        // Check if the request has a limit key
+        if (request()->has('limit')) {
+            $people->limit(request('limit'));
+        }
+
         return response()->json([
-            'created' => $note->exists,
-            'message' => $note->exists ? 'Note added' : 'Note could not be created',
-            'type' => 'note',
+            'people' => $people->get()->map->only(['id', 'first_name', 'last_name', 'email', 'phone']),
         ]);
+
     }
 
-    public function updateNote(Person $person, Note $note)
+    public function attach(Person $person)
     {
-        $updated = false;
-
-        if ($note->noteable_id === $person->id && $note->noteable_type === Person::class) {
-            // get content from request
-            $content = request()->validate([
-                'content' => 'required|string',
+        // if no attachable_type or attachable_ids, return
+        $attachableType = request()->get('attachable_type');
+        if (! $attachableType || ! request()->has('attachable_ids')) {
+            return response()->json([
+                'attached' => false,
+                'message' => 'No attachable type or IDs provided',
+                'type' => 'attachment',
             ]);
-
-            // update note
-            $updated = $note->update($content);
         }
 
-        // return json response
+        // attach the provided attachable IDs
+        $pluralizedAttachableName = $this->pluralizeAttachableName($attachableType);
+        $attached = $person->{$pluralizedAttachableName}()->attach(request('attachable_ids'));
+
         return response()->json([
-            'updated' => $updated,
-            'message' => $updated ? 'Note updated' : 'Note could not be updated',
-            'type' => 'note',
+            'updated' => $attached,
+            'message' => ucfirst($pluralizedAttachableName).' attached successfully',
+            'type' => $attachableType,
         ]);
     }
 
-    public function removeNote(Person $person, Note $note)
+    public function detach(Person $person)
     {
-        $destroyed = true;
-        // delete if note belongs to person
-        if ($note->noteable_id === $person->id && $note->noteable_type === Person::class) {
-            $destroyed = $note->delete();
+        // if no attachable_type or attachable_ids, return
+        $attachableType = request()->get('attachable_type');
+        if (! $attachableType || ! request()->has('attachable_ids')) {
+            return response()->json([
+                'detached' => false,
+                'message' => 'No attachable type or IDs provided',
+                'type' => 'attachment',
+            ]);
         }
 
-        // return json response
+        // detach the provided attachable IDs
+        $pluralizedAttachableName = $this->pluralizeAttachableName($attachableType);
+        $detached = $person->{$pluralizedAttachableName}()->detach(request('attachable_ids'));
+
         return response()->json([
-            'destroyed' => $destroyed,
-            'message' => $destroyed ? 'Note destroyed' : 'Note could not be destroyed',
-            'type' => 'note',
+            'updated' => $detached,
+            'message' => ucfirst($pluralizedAttachableName).' detached successfully',
+            'type' => $attachableType,
         ]);
     }
 }

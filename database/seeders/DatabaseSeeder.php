@@ -13,11 +13,30 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        Person::factory()
+        $people = Person::factory()
             ->count(50)
-            ->hasAddresses(rand(0, 4))
-            ->hasNotes(rand(0, 5))
             ->create();
+
+        $people->each(function ($person) {
+            $address_count = rand(0, 4);
+            $note_count = rand(0, 5);
+
+            for ($i = 0; $i < $address_count; $i++) {
+                $new = rand(0, 1);
+
+                $address = $person->addresses()->save(
+                    $new ? \App\Models\Address::factory()->make() : \App\Models\Address::inRandomOrder()->first()
+                );
+
+                $address->notes()->saveMany(
+                    \App\Models\Note::factory()->count($note_count)->make()
+                );
+            }
+
+            $person->notes()->saveMany(
+                \App\Models\Note::factory()->count($note_count)->make()
+            );
+        });
 
         User::factory()->create([
             'name' => 'Marlon Castillo',
