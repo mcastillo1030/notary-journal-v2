@@ -53,6 +53,8 @@ export const useModelApiResponses = (cbs) => {
             return;
         }
 
+        console.log(model, message);
+
         router.reload({
             only: getReloadOnly(model),
             onFinish: () => {

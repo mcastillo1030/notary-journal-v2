@@ -10,6 +10,7 @@ import PrimeVue from 'primevue/config';
 import ConfirmationService from 'primevue/confirmationservice';
 import ToastService from 'primevue/toastservice';
 import { createSSRApp, h } from 'vue';
+import { RayPlugin } from 'vue-ray';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import reactiveUiPlugin from './Plugins/reactiveUiPlugin';
 import { loadTheme } from './Utils/theme';
@@ -78,6 +79,7 @@ createInertiaApp({
 
         return createSSRApp({ render: () => h(App, props) })
             .use(plugin)
+            .use(RayPlugin)
             .use(ZiggyVue)
             .use(PrimeVue, {
                 theme: {

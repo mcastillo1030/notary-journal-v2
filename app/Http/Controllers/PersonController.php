@@ -83,6 +83,7 @@ class PersonController extends Controller
             'person' => fn () => $person,
             'addresses' => fn () => $person->addresses,
             'notes' => fn () => $person->notes()->latest()->get(),
+            'identifications' => fn () => $person->identifications,
         ]);
     }
 

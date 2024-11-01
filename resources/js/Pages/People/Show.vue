@@ -7,13 +7,16 @@ import PersonDetail from '@/Components/PersonDetail.vue';
 import AddNoteDialog from '@/Components/AddNoteDialog.vue';
 import AddressDialog from '@/Components/AddressEditDialog.vue';
 import ResourceHeader from '@/Components/ResourceHeader.vue';
-import AddressCard from '@/Components/AddressCard.vue';
+import AddressCard from '@/Components/AddressesCard.vue';
+import IdentificationsCard from '@/Components/IdentificationsCard.vue';
+import IdentificationDialog from '@/Components/IdentificationDialog.vue';
 
 // Lifecycle
 defineProps({
     person: Object,
     addresses: Array,
     notes: Array,
+    identifications: Array,
 });
 </script>
 
@@ -40,6 +43,8 @@ defineProps({
 
         <AddressDialog />
 
+        <IdentificationDialog />
+
         <div class="py-12">
             <article
                 class="mx-auto grid max-w-7xl grid-cols-1 gap-6 sm:px-6 lg:grid-cols-3 lg:gap-8 lg:px-8"
@@ -47,6 +52,7 @@ defineProps({
                 <div class="flex flex-col gap-y-6 lg:col-span-2">
                     <PersonDetail :person="person" />
                     <AddressCard :addresses="addresses" />
+                    <IdentificationsCard :identifications="identifications" />
                 </div>
                 <NotesColumn
                     :notes="notes"

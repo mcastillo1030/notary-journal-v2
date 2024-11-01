@@ -58,6 +58,17 @@ export const routeNames = {
         attach: 'addresses.attach',
         detach: 'addresses.detach',
     },
+    identification: {
+        index: 'identifications.index',
+        store: 'identifications.store',
+        show: 'identifications.show',
+        update: 'identifications.update',
+        destroy: 'identifications.destroy',
+        // list: 'identifications.list',
+        // attach: 'identifications.attach',
+        // detach: 'identifications.detach',
+        listNames: 'identifications.list-names',
+    },
     note: {
         index: 'notes.index', // unused
         store: 'notes.store',
@@ -184,8 +195,6 @@ export const axiosDetach = ({
     if (!model || Object.keys(params).length === 0) {
         return;
     }
-
-    console.log(routeParams);
 
     axiosRequest({
         method: 'patch',

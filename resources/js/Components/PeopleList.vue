@@ -12,6 +12,7 @@ defineProps({
     <DataView
         :value="people"
         class="nj-people-list border-surface dark:border-0"
+        pt:emptyMessage:class="px-4 py-2 bg-gray-100 dark:bg-zinc-700 rounded-lg"
     >
         <template #list="slotProps">
             <ul class="border-surface rounded-lg border dark:border-0">

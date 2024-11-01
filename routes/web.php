@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AddressController;
+use App\Http\Controllers\IdentificationController;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\PersonController;
 use App\Http\Controllers\ProfileController;
@@ -26,6 +27,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    // People
     Route::get('/people', [PersonController::class, 'index'])->name('people.index');
     Route::get('/people-list', [PersonController::class, 'list'])->name('people.list');
     Route::get('/people/create', [PersonController::class, 'create'])->name('people.create');
@@ -36,10 +38,12 @@ Route::middleware('auth')->group(function () {
     Route::patch('/people/{person}/detach', [PersonController::class, 'detach'])->name('people.detach');
     Route::delete('/people/{person}', [PersonController::class, 'destroyAjax'])->name('people.destroyAjax');
 
+    // Notes
     Route::post('/notes', [NoteController::class, 'store'])->name('notes.store');
     Route::patch('/notes/{note}', [NoteController::class, 'update'])->name('notes.update');
     Route::delete('/notes/{note}', [NoteController::class, 'destroy'])->name('notes.destroy');
 
+    // Addresses
     Route::get('/addresses', [AddressController::class, 'index'])->name('addresses.index');
     Route::get('/address-list', [AddressController::class, 'list'])->name('addresses.list');
     Route::post('/addresses', [AddressController::class, 'store'])->name('addresses.store');
@@ -48,6 +52,13 @@ Route::middleware('auth')->group(function () {
     Route::patch('/addresses/{address}/attach', [AddressController::class, 'attach'])->name('addresses.attach');
     Route::patch('/addresses/{address}/detach', [AddressController::class, 'detach'])->name('addresses.detach');
     Route::delete('/addresses/{address}', [AddressController::class, 'destroy'])->name('addresses.destroy');
+
+    // Identifications
+    Route::get('/identifications-list', [IdentificationController::class, 'list'])->name('identifications.list');
+    Route::get('/identifications-names', [IdentificationController::class, 'listNames'])->name('identifications.list-names');
+    Route::post('/identifications', [IdentificationController::class, 'store'])->name('identifications.store');
+    Route::patch('/identifications/{identification}', [IdentificationController::class, 'update'])->name('identifications.update');
+    Route::delete('/identifications/{identification}', [IdentificationController::class, 'destroy'])->name('identifications.destroy');
 });
 
 require __DIR__.'/auth.php';

@@ -13,6 +13,13 @@ return new class extends Migration
     {
         Schema::create('identifications', function (Blueprint $table) {
             $table->id();
+            $table->enum('type', array_keys(config('constants.identification.types')));
+            // $table->enum('document_type', array_keys(config('constants.identification.document_types')))->nullable();
+            $table->string('document_name')->nullable();
+            $table->string('document_number')->nullable();
+            $table->date('issue_date')->nullable();
+            $table->date('expiration_date')->nullable();
+            $table->foreignId('person_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }

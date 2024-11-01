@@ -30,6 +30,7 @@
         "@primevue/themes": "^4.0.7",
         "pinia": "^2.2.4",
         "primeicons": "^7.0.0",
-        "primevue": "^4.0.7"
+        "primevue": "^4.0.7",
+        "vue-ray": "^2.0.3"
     }
 }

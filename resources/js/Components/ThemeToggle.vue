@@ -13,17 +13,15 @@ const cycleTheme = () => {
 </script>
 
 <template>
-    <div>
-        <Button
-            outlined
-            class="!border-1"
-            size="small"
-            aria-label="Toggle Theme"
-            @click="cycleTheme()"
-        >
-            <i class="pi pi-sun" v-if="currentTheme === 'light'"></i>
-            <i class="pi pi-moon" v-else-if="currentTheme === 'dark'"></i>
-            <i class="pi pi-desktop" v-else></i>
-        </Button>
-    </div>
+    <Button
+        outlined
+        class="!border-1 ms-auto self-center"
+        size="small"
+        aria-label="Toggle Theme"
+        @click="cycleTheme()"
+    >
+        <i class="pi pi-sun" v-if="currentTheme === 'light'"></i>
+        <i class="pi pi-moon" v-else-if="currentTheme === 'dark'"></i>
+        <i class="pi pi-desktop" v-else></i>
+    </Button>
 </template>

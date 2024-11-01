@@ -55,6 +55,11 @@ class HandleInertiaRequests extends Middleware
             'addresses.list',
             'addresses.attach',
             'addresses.detach',
+            'identifications.store',
+            'identifications.update',
+            'identifications.destroy',
+            'identifications.list',
+            'identifications.list-names',
         ]);
     }
 
@@ -144,6 +149,7 @@ class HandleInertiaRequests extends Middleware
                 'location' => $request->url(),
             ],
             'breadcrumbs' => $this->getBreadcrumbs($request->route()->getName()),
+            'constants' => config('constants'),
         ];
     }
 }

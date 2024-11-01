@@ -11,8 +11,8 @@ const showSuccessToast = inject('showSuccessToast');
 const showErrorToast = inject('showErrorToast');
 const showUnknownErrorToast = inject('showUnknownErrorToast');
 const { handleAxiosResponse, handleAxiosError } = useModelApiResponses({
-    onSuccessRedirect: (message) => showSuccessToast(message),
-    onResponseError: (message) => showErrorToast(message),
+    onSuccessRedirect: (message) => showSuccessToast({ message }),
+    onResponseError: (message) => showErrorToast({ message }),
     onUnknownError: showUnknownErrorToast,
 });
 const items = ref([

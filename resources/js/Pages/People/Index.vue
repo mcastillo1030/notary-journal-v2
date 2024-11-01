@@ -75,7 +75,7 @@ defineProps({
             </h2>
         </template>
 
-        <div class="py-12">
+        <div class="nj-people-index py-12">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
                 <div
                     class="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-zinc-800"
@@ -93,13 +93,18 @@ defineProps({
                             :rows="10"
                             :filters="filters"
                             paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
+                            :pt:pcPaginator="{
+                                style: {
+                                    'border-bottom': '0',
+                                },
+                            }"
                         >
                             <template #header>
                                 <Toolbar>
                                     <template #start>
                                         <Button
                                             icon="pi pi-external-link"
-                                            class="mr-2"
+                                            class="hmr-2"
                                             size="small"
                                             label="Export"
                                             severity="secondary"
@@ -107,7 +112,7 @@ defineProps({
                                         />
                                     </template>
                                     <template #center>
-                                        <IconField>
+                                        <IconField class="w-full">
                                             <InputIcon>
                                                 <i class="pi pi-search" />
                                             </InputIcon>
@@ -115,6 +120,7 @@ defineProps({
                                                 v-model="
                                                     filters['global'].value
                                                 "
+                                                fluid
                                                 placeholder="Search..."
                                             />
                                         </IconField>
@@ -171,3 +177,23 @@ defineProps({
         </div>
     </AuthenticatedLayout>
 </template>
+
+<style>
+.nj-people-index .p-datatable-paginator-bottom {
+    border-block-end: 0;
+}
+
+.nj-people-index .p-toolbar-start {
+    display: none;
+}
+
+@media screen and (min-width: 640px) {
+    .nj-people-index .p-toolbar-start {
+        display: flex;
+    }
+
+    .nj-people-index .p-toolbar-center {
+        flex-basis: 60%;
+    }
+}
+</style>

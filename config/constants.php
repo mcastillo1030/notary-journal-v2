@@ -14,9 +14,9 @@ return [
     'identification' => [
         'types' => [
             'document' => 'Document',
-            'knowledge' => 'Personally known to me',
-            'witness-document' => 'Credible witness with identification',
-            'witness-knowledge' => 'Credible witness that is personally known to me',
+            'knowledge' => 'Personal Knowledge',
+            'witness-document' => 'Credible Witness with ID',
+            'witness-knowledge' => 'Credible Witness with Personal Knowledge',
         ],
 
         'document_types' => [
